@@ -1,0 +1,13 @@
+# 텍스트 파일은 OS와 관계없이 LF로 저장
+* text=auto eol=lf
+
+# 바이너리 파일은 줄바꿈 변환 제외
+*.ico binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.avif binary
+*.woff binary
+*.woff2 binary
