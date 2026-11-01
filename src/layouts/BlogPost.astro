@@ -36,12 +36,19 @@ const { title, description, pubDate, updatedDate, heroImage, headings = [] } = A
 				display: none;
 			}
 			@media (min-width: 1200px) {
+				/* 목차 쪽으로 쏠린 본문을 가운데로 당기도록 왼쪽에 빈 열을 둔다 (간격 포함 --space-post-offset) */
 				.post {
-					grid-template-columns: minmax(0, var(--width-content)) var(--width-toc);
+					grid-template-columns:
+						calc(var(--space-post-offset) - var(--space-post-columns))
+						minmax(0, var(--width-content))
+						var(--width-toc);
+				}
+				.post-body {
+					grid-column: 2;
 				}
 				.post-side {
 					display: block;
-					grid-column: 2;
+					grid-column: 3;
 					grid-row: 1;
 				}
 			}
