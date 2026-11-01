@@ -21,13 +21,13 @@ const { title, description, pubDate, updatedDate, heroImage, headings = [] } = A
 				width: auto;
 				max-width: none;
 				margin: 0;
-				padding: 3rem var(--space-gutter) 4rem;
+				padding: var(--space-page-top) var(--space-gutter) var(--space-post-bottom);
 			}
 			.post {
 				display: grid;
 				grid-template-columns: minmax(0, var(--width-content));
 				justify-content: center;
-				gap: 0 var(--gap-post-columns);
+				gap: 0 var(--space-post-columns);
 			}
 			.post-body {
 				min-width: 0;

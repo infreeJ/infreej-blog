@@ -12,15 +12,16 @@
 :root {
 	color-scheme: light dark;
 
-	/* 색상: 다크 대비는 라이트와 비슷한 수준으로 맞춘다 (라이트 / 다크 배경 대비) */
+	/* 색상: 글자 대비는 라이트와 다크를 비슷한 수준으로 맞춘다 (라이트 / 다크 배경 대비) */
 	--color-bg: light-dark(#fff, #0d1117);
 	--color-bg-subtle: light-dark(#f6f8fa, #161b22);
-	--color-text: light-dark(#1f2328, #e6edf3); /* 약 15.4:1 / 16:1 */
-	--color-text-muted: light-dark(#57606a, #9198a1); /* 약 6.5:1 / 6.5:1 */
+	--color-text: light-dark(#1f2328, #e6edf3); /* 약 15.8:1 / 16:1 */
+	--color-text-muted: light-dark(#57606a, #9198a1); /* 약 6.4:1 / 6.5:1 */
 	--color-heading: light-dark(#0d1117, #f0f6fc);
 	--color-link: light-dark(#0550ae, #58a6ff); /* 약 7.6:1 / 7.5:1 */
-	--color-border: light-dark(#d0d7de, #3d444d);
-	--color-border-soft: light-dark(#e6e9ed, #30363d);
+	/* 경계선은 장식용이라 대비 기준을 두지 않는다. 다크가 조금 더 진하다 */
+	--color-border: light-dark(#d0d7de, #3d444d); /* 약 1.45:1 / 1.9:1 */
+	--color-border-soft: light-dark(#e6e9ed, #30363d); /* 약 1.2:1 / 1.55:1 */
 
 	/* 글꼴 */
 	--font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
@@ -37,7 +38,8 @@
 	--font-size-h1: calc(2em + 1px);
 	--font-size-h2: calc(1.5em + 0.5px);
 	--font-size-h3: calc(1.25em + 0.25px);
-	--font-size-h4: 1.05em;
+	--font-size-h4-h6: 1.05em;
+	--font-size-post-list-title: 1.2em;
 	--font-size-meta: 0.9em;
 	--font-size-table: 0.94em;
 	--font-size-code-inline: 0.88em;
@@ -52,6 +54,7 @@
 	--line-height-title: 1.3;
 	--line-height-ui: 1.5;
 	--line-height-code: 1.65;
+	--line-height-table: 1.6;
 
 	/* 자간: em 자간은 px로 상속되므로 크기가 다른 요소에는 다시 지정한다 */
 	--letter-spacing-tight: -0.02em;
@@ -62,6 +65,11 @@
 	--space-heading-top: 2.4em;
 	--space-heading-bottom: 0.6em;
 	--space-section-top: 3em;
+	--space-divider: 2.5em;
+	--space-page-top: 3rem;
+	--space-page-bottom: 3rem;
+	--space-post-bottom: 4rem;
+	--space-post-columns: 3.5rem;
 	--space-gutter: 1rem;
 	--space-sticky-offset: 1.5rem;
 
@@ -77,7 +85,6 @@
 	--width-content: 700px;
 	--width-toc: 220px;
 	--width-header: 1000px;
-	--gap-post-columns: 3.5rem;
 }
 @media (min-width: 721px) {
 	:root {
@@ -112,7 +119,7 @@ main {
 	width: var(--width-content);
 	max-width: calc(100% - 2 * var(--space-gutter));
 	margin: auto;
-	padding: 3rem 0;
+	padding: var(--space-page-top) 0 var(--space-page-bottom);
 }
 h1,
 h2,
@@ -140,7 +147,7 @@ h3 {
 h4,
 h5,
 h6 {
-	font-size: var(--font-size-h4);
+	font-size: var(--font-size-h4-h6);
 }
 strong,
 b {
@@ -189,7 +196,7 @@ table {
 	overflow-x: auto;
 	border-collapse: collapse;
 	font-size: var(--font-size-table);
-	line-height: 1.6;
+	line-height: var(--line-height-table);
 	word-break: normal;
 }
 th,
@@ -248,7 +255,7 @@ blockquote > :last-child {
 	margin-bottom: 0;
 }
 hr {
-	margin: 2.5em 0;
+	margin: var(--space-divider) 0;
 	border: none;
 	border-top: 1px solid var(--color-border);
 }
@@ -258,9 +265,6 @@ hr {
 	margin-top: var(--space-section-top);
 	padding-bottom: 0.3em;
 	border-bottom: 1px solid var(--color-border);
-}
-.prose h3 {
-	margin-top: var(--space-heading-top);
 }
 .prose > h2:first-child,
 .prose > h3:first-child {
