@@ -61,25 +61,25 @@ const items = headings.filter((heading) => heading.depth >= 2 && heading.depth <
 	}
 	a {
 		display: block;
-		color: var(--text-muted);
+		color: var(--color-text-muted);
 		text-decoration: none;
 	}
 	a:hover {
-		color: var(--link);
+		color: var(--color-link);
 	}
 
 	/* 좁은 화면: 본문 위 접히는 목록 */
 	.toc-mobile {
 		margin-bottom: 2em;
-		border: 1px solid var(--border);
-		border-radius: 6px;
-		font-size: 15px;
-		line-height: 1.5;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+		font-size: var(--font-size-ui);
+		line-height: var(--line-height-ui);
 	}
 	.toc-mobile summary {
 		padding: 0.75em 1em;
-		color: var(--heading);
-		font-weight: 600;
+		color: var(--color-heading);
+		font-weight: var(--font-weight-semibold);
 		cursor: pointer;
 	}
 	.toc-mobile ol {
@@ -100,20 +100,20 @@ const items = headings.filter((heading) => heading.depth >= 2 && heading.depth <
 		.toc-wide {
 			display: block;
 			position: sticky;
-			top: 1.5rem;
-			max-height: calc(100vh - 3rem);
+			top: var(--space-sticky-offset);
+			max-height: calc(100vh - 2 * var(--space-sticky-offset));
 			overflow-y: auto;
-			font-size: 14px;
-			line-height: 1.5;
+			font-size: var(--font-size-ui-sm);
+			line-height: var(--line-height-ui);
 			word-break: keep-all;
 		}
 		.toc-title {
 			margin: 0 0 0.6em;
-			color: var(--heading);
-			font-weight: 600;
+			color: var(--color-heading);
+			font-weight: var(--font-weight-semibold);
 		}
 		.toc-wide ol {
-			border-left: 1px solid var(--border);
+			border-left: 1px solid var(--color-border);
 		}
 		.toc-wide a {
 			padding: 0.3em 0 0.3em calc(0.9em + var(--indent));
@@ -121,8 +121,8 @@ const items = headings.filter((heading) => heading.depth >= 2 && heading.depth <
 			border-left: 2px solid transparent;
 		}
 		.toc-wide a.current {
-			border-left-color: var(--link);
-			color: var(--link);
+			border-left-color: var(--color-link);
+			color: var(--color-link);
 		}
 	}
 </style>

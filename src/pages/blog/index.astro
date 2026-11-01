@@ -21,10 +21,10 @@ const posts = await getSortedPosts();
 			}
 			ul li {
 				margin: 0;
-				border-bottom: 1px solid var(--border);
+				border-bottom: 1px solid var(--color-border);
 			}
 			ul li:first-child {
-				border-top: 1px solid var(--border);
+				border-top: 1px solid var(--color-border);
 			}
 			ul li a {
 				display: block;
@@ -33,18 +33,18 @@ const posts = await getSortedPosts();
 			}
 			.title {
 				margin: 0;
-				color: var(--heading);
+				color: var(--color-heading);
 				font-size: 1.2em;
 				line-height: 1.4;
 			}
 			.date {
 				margin: 0.25rem 0 0;
-				color: var(--text-muted);
-				font-size: 0.9em;
-				line-height: 1.5;
+				color: var(--color-text-muted);
+				font-size: var(--font-size-meta);
+				line-height: var(--line-height-ui);
 			}
 			ul li a:hover .title {
-				color: var(--link);
+				color: var(--color-link);
 				text-decoration: underline;
 				text-underline-offset: 0.2em;
 			}

@@ -1,37 +1,102 @@
 /* 기술 문서형 스타일: 흰 배경, 회색 경계선, 포인트 색은 링크 하나 */
 
+/*
+ * 디자인 토큰
+ * 미디어 쿼리 조건에는 CSS 변수를 쓸 수 없으므로 중단점은 값으로 쓴다.
+ * - 모바일: max-width 720px / 데스크톱: min-width 721px
+ * - 넓은 화면(본문 옆 목차): min-width 1200px
+ */
 :root {
-	--text: #1f2328; /* 흰 배경 대비 약 15.4:1 */
-	--text-muted: #57606a; /* 흰 배경 대비 약 6.5:1 */
-	--heading: #0d1117;
-	--link: #0550ae; /* 흰 배경 대비 약 7.6:1 */
-	--border: #d0d7de;
-	--border-soft: #e6e9ed;
-	--bg-subtle: #f6f8fa;
+	/* 색상 */
+	--color-bg: #fff;
+	--color-bg-subtle: #f6f8fa;
+	--color-text: #1f2328; /* 흰 배경 대비 약 15.4:1 */
+	--color-text-muted: #57606a; /* 흰 배경 대비 약 6.5:1 */
+	--color-heading: #0d1117;
+	--color-link: #0550ae; /* 흰 배경 대비 약 7.6:1 */
+	--color-border: #d0d7de;
+	--color-border-soft: #e6e9ed;
+
+	/* 글꼴 */
 	--font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
 		'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 	--font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',
 		monospace;
+
+	/* 글자 크기: 본문·코드블록·UI는 px, 나머지는 놓인 요소 기준 em */
+	--font-size-base: 16px;
+	--font-size-code-block: 13px;
+	--font-size-ui: 15px;
+	--font-size-ui-sm: 14px;
+	/* 본문이 1px 줄 때 제목도 1px만 줄도록 em 비율에 보정값을 더한다 */
+	--font-size-h1: calc(2em + 1px);
+	--font-size-h2: calc(1.5em + 0.5px);
+	--font-size-h3: calc(1.25em + 0.25px);
+	--font-size-h4: 1.05em;
+	--font-size-meta: 0.9em;
+	--font-size-table: 0.94em;
+	--font-size-code-inline: 0.88em;
+
+	/* 글자 굵기 */
+	--font-weight-bold: 700;
+	--font-weight-semibold: 600;
+
+	/* 줄 간격 */
+	--line-height-body: 1.8;
+	--line-height-heading: 1.35;
+	--line-height-title: 1.3;
+	--line-height-ui: 1.5;
+	--line-height-code: 1.65;
+
+	/* 자간: em 자간은 px로 상속되므로 크기가 다른 요소에는 다시 지정한다 */
+	--letter-spacing-tight: -0.02em;
+
+	/* 간격 */
+	--space-block: 1.5em;
+	--space-list-item: 0.4em;
+	--space-heading-top: 2.4em;
+	--space-heading-bottom: 0.6em;
+	--space-section-top: 3em;
+	--space-gutter: 1rem;
+	--space-sticky-offset: 1.5rem;
+
+	/* 모서리 */
+	--radius-sm: 2px;
+	--radius-md: 4px;
+	--radius-lg: 6px;
+
+	/* 레이아웃 */
+	--width-content: 700px;
+	--width-toc: 220px;
+	--width-header: 1000px;
+	--gap-post-columns: 3.5rem;
 }
+@media (min-width: 721px) {
+	:root {
+		--font-size-base: 17px;
+		--font-size-code-block: 13.5px;
+	}
+}
+
 html {
-	scroll-padding-top: 1.5rem;
+	scroll-padding-top: var(--space-sticky-offset);
 }
 body {
 	margin: 0;
 	padding: 0;
-	background: #fff;
-	color: var(--text);
+	background: var(--color-bg);
+	color: var(--color-text);
 	font-family: var(--font-sans);
-	font-size: 16px;
-	line-height: 1.8;
-	letter-spacing: -0.02em;
+	font-size: var(--font-size-base);
+	line-height: var(--line-height-body);
+	letter-spacing: var(--letter-spacing-tight);
 	word-break: keep-all;
 	overflow-wrap: anywhere;
 	-webkit-text-size-adjust: 100%;
 }
 main {
-	width: 700px;
-	max-width: calc(100% - 2rem);
+	width: var(--width-content);
+	max-width: calc(100% - 2 * var(--space-gutter));
 	margin: auto;
 	padding: 3rem 0;
 }
@@ -41,117 +106,115 @@ h3,
 h4,
 h5,
 h6 {
-	margin: 2.4em 0 0.6em;
-	color: var(--heading);
-	font-weight: 700;
-	line-height: 1.35;
-	/* em 자간은 px로 상속되므로 제목 크기 기준으로 다시 계산한다 */
-	letter-spacing: -0.02em;
+	margin: var(--space-heading-top) 0 var(--space-heading-bottom);
+	color: var(--color-heading);
+	font-weight: var(--font-weight-bold);
+	line-height: var(--line-height-heading);
+	letter-spacing: var(--letter-spacing-tight);
 }
-/* 본문이 1px 줄 때 제목도 1px만 줄도록 em 비율에 보정값을 더한다 */
 h1 {
 	margin-top: 0;
-	font-size: calc(2em + 1px);
-	line-height: 1.3;
+	font-size: var(--font-size-h1);
+	line-height: var(--line-height-title);
 }
 h2 {
-	font-size: calc(1.5em + 0.5px);
+	font-size: var(--font-size-h2);
 }
 h3 {
-	font-size: calc(1.25em + 0.25px);
+	font-size: var(--font-size-h3);
 }
 h4,
 h5,
 h6 {
-	font-size: 1.05em;
+	font-size: var(--font-size-h4);
 }
 strong,
 b {
-	font-weight: 700;
+	font-weight: var(--font-weight-bold);
 }
 a {
-	color: var(--link);
+	color: var(--color-link);
 	text-underline-offset: 0.2em;
 }
 a:hover {
-	color: var(--heading);
+	color: var(--color-heading);
 }
 :focus-visible {
-	outline: 2px solid var(--link);
+	outline: 2px solid var(--color-link);
 	outline-offset: 2px;
-	border-radius: 2px;
+	border-radius: var(--radius-sm);
 }
 p {
-	margin: 0 0 1.5em;
+	margin: 0 0 var(--space-block);
 }
 ul,
 ol {
-	margin: 0 0 1.5em;
+	margin: 0 0 var(--space-block);
 	padding-left: 1.5em;
 }
 li {
-	margin: 0.4em 0;
+	margin: var(--space-list-item) 0;
 }
 li > ul,
 li > ol {
-	margin: 0.4em 0 0;
+	margin: var(--space-list-item) 0 0;
 }
 img {
 	display: block;
 	max-width: 100%;
 	height: auto;
-	margin: 1.5em 0;
-	border: 1px solid var(--border-soft);
-	border-radius: 6px;
+	margin: var(--space-block) 0;
+	border: 1px solid var(--color-border-soft);
+	border-radius: var(--radius-lg);
 }
 table {
 	display: block;
 	width: max-content;
 	max-width: 100%;
-	margin: 0 0 1.5em;
+	margin: 0 0 var(--space-block);
 	overflow-x: auto;
 	border-collapse: collapse;
-	font-size: 0.94em;
+	font-size: var(--font-size-table);
 	line-height: 1.6;
 	word-break: normal;
 }
 th,
 td {
 	padding: 0.65em 1em;
-	border: 1px solid var(--border);
+	border: 1px solid var(--color-border);
 	text-align: left;
 }
 th {
-	background: var(--bg-subtle);
-	font-weight: 600;
+	background: var(--color-bg-subtle);
+	font-weight: var(--font-weight-semibold);
 }
 code {
 	padding: 0.15em 0.4em;
-	background: var(--bg-subtle);
-	border: 1px solid var(--border-soft);
-	border-radius: 4px;
+	background: var(--color-bg-subtle);
+	border: 1px solid var(--color-border-soft);
+	border-radius: var(--radius-md);
 	font-family: var(--font-mono);
 	letter-spacing: 0;
-	font-size: 0.88em;
+	font-size: var(--font-size-code-inline);
 	word-break: normal;
 	overflow-wrap: anywhere;
 }
 pre {
-	margin: 0 0 1.5em;
+	margin: 0 0 var(--space-block);
 	padding: 1.1em 1.25em;
 	overflow-x: auto;
-	border: 1px solid var(--border);
-	border-radius: 6px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-lg);
 	font-family: var(--font-mono);
 	letter-spacing: 0;
-	font-size: 13px;
-	line-height: 1.65;
+	font-size: var(--font-size-code-block);
+	line-height: var(--line-height-code);
 	word-break: normal;
 	overflow-wrap: normal;
 	tab-size: 2;
 }
 pre.astro-code {
-	background-color: var(--bg-subtle) !important;
+	background-color: var(--color-bg-subtle) !important;
 }
 pre > code {
 	padding: 0;
@@ -162,10 +225,10 @@ pre > code {
 	overflow-wrap: normal;
 }
 blockquote {
-	margin: 0 0 1.5em;
+	margin: 0 0 var(--space-block);
 	padding: 0.2em 0 0.2em 1em;
-	border-left: 3px solid var(--border);
-	color: var(--text-muted);
+	border-left: 3px solid var(--color-border);
+	color: var(--color-text-muted);
 }
 blockquote > :last-child {
 	margin-bottom: 0;
@@ -173,30 +236,21 @@ blockquote > :last-child {
 hr {
 	margin: 2.5em 0;
 	border: none;
-	border-top: 1px solid var(--border);
+	border-top: 1px solid var(--color-border);
 }
 
 /* 글 본문: 제목은 위 여백을 넓게, 아래는 좁게 */
 .prose h2 {
-	margin-top: 3em;
+	margin-top: var(--space-section-top);
 	padding-bottom: 0.3em;
-	border-bottom: 1px solid var(--border);
+	border-bottom: 1px solid var(--color-border);
 }
 .prose h3 {
-	margin-top: 2.4em;
+	margin-top: var(--space-heading-top);
 }
 .prose > h2:first-child,
 .prose > h3:first-child {
 	margin-top: 0;
-}
-
-@media (min-width: 721px) {
-	body {
-		font-size: 17px;
-	}
-	pre {
-		font-size: 13.5px;
-	}
 }
 
 .sr-only {
