@@ -11,7 +11,11 @@ export default defineConfig({
 	integrations: [mdx(), sitemap()],
 	markdown: {
 		shikiConfig: {
-			theme: 'github-light',
+			// 라이트·다크 색을 함께 출력하고 global.css에서 시스템 설정에 따라 전환
+			themes: {
+				light: 'github-light',
+				dark: 'github-dark-default',
+			},
 		},
 	},
 });
