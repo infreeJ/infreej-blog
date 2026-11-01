@@ -1,0 +1,196 @@
+---
+// 라이트·다크·시스템 중 하나를 고르는 드롭다운. 열고 닫기는 popover 속성이 맡는다(바깥 클릭·Esc 포함)
+// 첫 렌더 전 적용은 BaseHead의 인라인 스크립트가 맡는다. JS가 없으면 버튼을 숨기고 시스템 설정을 따른다
+const options = [
+	{
+		value: 'light',
+		label: '라이트',
+		icon: '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>',
+	},
+	{
+		value: 'dark',
+		label: '다크',
+		icon: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>',
+	},
+	{
+		value: 'system',
+		label: '시스템',
+		icon: '<rect x="2" y="3" width="20" height="14" rx="2"></rect><path d="M8 21h8M12 17v4"></path>',
+	},
+];
+const checkIcon = '<path d="M20 6 9 17l-5-5"></path>';
+---
+
+<div class="theme-picker" data-choice="system">
+	<button type="button" class="theme-trigger" popovertarget="theme-menu" hidden>
+		{
+			options.map((option) => (
+				<svg class={`icon icon-${option.value}`} viewBox="0 0 24 24" aria-hidden="true" set:html={option.icon} />
+			))
+		}
+	</button>
+	<div id="theme-menu" class="theme-menu" popover>
+		{
+			options.map((option) => (
+				<button type="button" class="theme-option" data-value={option.value} aria-pressed="false">
+					<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" set:html={option.icon} />
+					<span>{option.label}</span>
+					<svg class="check" viewBox="0 0 24 24" aria-hidden="true" set:html={checkIcon} />
+				</button>
+			))
+		}
+	</div>
+</div>
+<style>
+	svg {
+		flex: none;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	/* 헤더의 버튼: 현재 선택한 테마 아이콘만 보인다 */
+	.theme-trigger {
+		display: flex;
+		padding: 0.4em;
+		color: var(--color-heading);
+		background: none;
+		border: 0;
+		border-radius: var(--radius-md);
+		cursor: pointer;
+	}
+	.theme-trigger[hidden] {
+		display: none;
+	}
+	.theme-trigger:hover {
+		background: var(--color-bg-subtle);
+	}
+	.theme-trigger .icon {
+		display: none;
+		width: 20px;
+		height: 20px;
+	}
+	[data-choice='light'] .icon-light,
+	[data-choice='dark'] .icon-dark,
+	[data-choice='system'] .icon-system {
+		display: block;
+	}
+
+	/* 펼친 메뉴: 위치는 열 때 스크립트가 버튼 아래로 맞춘다 */
+	.theme-menu {
+		position: absolute;
+		inset: auto;
+		min-width: 9em;
+		margin: 0;
+		padding: 0.3em;
+		color: var(--color-text);
+		background: var(--color-bg);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+		box-shadow: var(--shadow-overlay);
+		font-size: var(--font-size-ui-sm);
+		line-height: var(--line-height-ui);
+	}
+	.theme-option {
+		display: flex;
+		align-items: center;
+		gap: 0.6em;
+		width: 100%;
+		padding: 0.45em 0.6em;
+		color: inherit;
+		background: none;
+		border: 0;
+		border-radius: var(--radius-md);
+		font: inherit;
+		letter-spacing: inherit;
+		text-align: left;
+		cursor: pointer;
+	}
+	.theme-option:hover,
+	.theme-option:focus-visible {
+		background: var(--color-bg-subtle);
+	}
+	.theme-option .icon,
+	.theme-option .check {
+		width: 16px;
+		height: 16px;
+	}
+	.theme-option .check {
+		margin-left: auto;
+		visibility: hidden;
+	}
+	.theme-option[aria-pressed='true'] {
+		color: var(--color-link);
+		font-weight: var(--font-weight-semibold);
+	}
+	.theme-option[aria-pressed='true'] .check {
+		visibility: visible;
+	}
+</style>
+<script>
+	type Choice = 'light' | 'dark' | 'system';
+
+	const names: Record<Choice, string> = { light: '라이트', dark: '다크', system: '시스템' };
+	const root = document.documentElement;
+	const meta = document.querySelector('meta[name="color-scheme"]');
+
+	function currentChoice(): Choice {
+		const theme = root.dataset.theme;
+		return theme === 'light' || theme === 'dark' ? theme : 'system';
+	}
+
+	function apply(choice: Choice) {
+		if (choice === 'system') {
+			delete root.dataset.theme;
+		} else {
+			root.dataset.theme = choice;
+		}
+		meta?.setAttribute('content', choice === 'system' ? 'light dark' : choice);
+		try {
+			if (choice === 'system') localStorage.removeItem('theme');
+			else localStorage.setItem('theme', choice);
+		} catch {}
+	}
+
+	document.querySelectorAll<HTMLElement>('.theme-picker').forEach((picker) => {
+		const trigger = picker.querySelector<HTMLButtonElement>('.theme-trigger')!;
+		const menu = picker.querySelector<HTMLElement>('.theme-menu')!;
+		const items = picker.querySelectorAll<HTMLButtonElement>('.theme-option');
+
+		function render(choice: Choice) {
+			const label = `테마 선택 (현재: ${names[choice]})`;
+			picker.dataset.choice = choice;
+			trigger.setAttribute('aria-label', label);
+			trigger.title = label;
+			items.forEach((item) => item.setAttribute('aria-pressed', String(item.dataset.value === choice)));
+		}
+
+		// 메뉴 오른쪽 끝을 버튼 오른쪽 끝에 맞춰 버튼 바로 아래에 띄운다
+		function place() {
+			const rect = trigger.getBoundingClientRect();
+			menu.style.top = `${rect.bottom + window.scrollY + 4}px`;
+			menu.style.right = `${root.clientWidth - rect.right - window.scrollX}px`;
+		}
+		menu.addEventListener('beforetoggle', (event) => {
+			if ((event as ToggleEvent).newState === 'open') place();
+		});
+		window.addEventListener('resize', () => {
+			if (menu.matches(':popover-open')) place();
+		});
+
+		items.forEach((item) =>
+			item.addEventListener('click', () => {
+				const choice = item.dataset.value as Choice;
+				apply(choice);
+				render(choice);
+				menu.hidePopover();
+				trigger.focus();
+			}),
+		);
+
+		render(currentChoice());
+		trigger.hidden = false;
+	});
+</script>

@@ -21,6 +21,18 @@ const { title, description, image = FallbackImage } = Astro.props;
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="color-scheme" content="light dark" />
+<script is:inline>
+	// 저장된 테마를 첫 렌더 전에 적용해 깜빡임을 막는다. 저장값이 없으면 시스템 설정을 따른다
+	(() => {
+		let theme = null;
+		try {
+			theme = localStorage.getItem('theme');
+		} catch {}
+		if (theme !== 'light' && theme !== 'dark') return;
+		document.documentElement.dataset.theme = theme;
+		document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', theme);
+	})();
+</script>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" href="/favicon.ico" />
 <link rel="sitemap" href="/sitemap-index.xml" />
