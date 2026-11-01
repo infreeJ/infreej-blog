@@ -5,9 +5,9 @@ import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
-import { getPublishedPosts } from '../../lib/posts';
+import { getSortedPosts } from '../../lib/posts';
 
-const posts = await getPublishedPosts();
+const posts = await getSortedPosts();
 ---
 
 <!doctype html>
