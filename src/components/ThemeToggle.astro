@@ -1,6 +1,7 @@
 ---
 // 라이트·다크·시스템 중 하나를 고르는 드롭다운. 열고 닫기는 popover 속성이 맡는다(바깥 클릭·Esc 포함)
-// 첫 렌더 전 적용은 BaseHead의 인라인 스크립트가 맡는다. JS가 없으면 버튼을 숨기고 시스템 설정을 따른다
+// 첫 렌더 전 적용은 BaseHead의 인라인 스크립트가 맡는다. JS가 없거나 popover를 지원하지 않으면 숨기고 시스템 설정을 따른다
+// 메뉴 id가 고정이므로 페이지에 한 번만 둔다
 const options = [
 	{
 		value: 'light',
@@ -29,10 +30,10 @@ const checkIcon = '<path d="M20 6 9 17l-5-5"></path>';
 			))
 		}
 	</button>
-	<div id="theme-menu" class="theme-menu" popover>
+	<div id="theme-menu" class="theme-menu" popover role="menu" aria-label="테마">
 		{
 			options.map((option) => (
-				<button type="button" class="theme-option" data-value={option.value} aria-pressed="false">
+				<button type="button" class="theme-option" role="menuitemradio" data-value={option.value} aria-checked="false">
 					<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" set:html={option.icon} />
 					<span>{option.label}</span>
 					<svg class="check" viewBox="0 0 24 24" aria-hidden="true" set:html={checkIcon} />
@@ -42,6 +43,13 @@ const checkIcon = '<path d="M20 6 9 17l-5-5"></path>';
 	</div>
 </div>
 <style>
+	/* popover를 모르는 브라우저에서는 메뉴가 늘 펼쳐져 보이므로 통째로 숨긴다 */
+	@supports not selector(:popover-open) {
+		.theme-picker {
+			display: none;
+		}
+	}
+
 	svg {
 		flex: none;
 		fill: none;
@@ -72,9 +80,10 @@ const checkIcon = '<path d="M20 6 9 17l-5-5"></path>';
 		width: 20px;
 		height: 20px;
 	}
-	[data-choice='light'] .icon-light,
-	[data-choice='dark'] .icon-dark,
-	[data-choice='system'] .icon-system {
+	/* 선언 순서와 무관하게 위 규칙을 이기도록 명시도를 높인다 */
+	.theme-picker[data-choice='light'] .theme-trigger .icon-light,
+	.theme-picker[data-choice='dark'] .theme-trigger .icon-dark,
+	.theme-picker[data-choice='system'] .theme-trigger .icon-system {
 		display: block;
 	}
 
@@ -121,20 +130,23 @@ const checkIcon = '<path d="M20 6 9 17l-5-5"></path>';
 		margin-left: auto;
 		visibility: hidden;
 	}
-	.theme-option[aria-pressed='true'] {
+	.theme-option[aria-checked='true'] {
 		color: var(--color-link);
 		font-weight: var(--font-weight-semibold);
 	}
-	.theme-option[aria-pressed='true'] .check {
+	.theme-option[aria-checked='true'] .check {
 		visibility: visible;
 	}
 </style>
 <script>
 	type Choice = 'light' | 'dark' | 'system';
 
-	const names: Record<Choice, string> = { light: '라이트', dark: '다크', system: '시스템' };
 	const root = document.documentElement;
 	const meta = document.querySelector('meta[name="color-scheme"]');
+	const picker = document.querySelector<HTMLElement>('.theme-picker')!;
+	const trigger = picker.querySelector<HTMLButtonElement>('.theme-trigger')!;
+	const menu = picker.querySelector<HTMLElement>('.theme-menu')!;
+	const items = [...picker.querySelectorAll<HTMLButtonElement>('.theme-option')];
 
 	function currentChoice(): Choice {
 		const theme = root.dataset.theme;
@@ -154,30 +166,47 @@ const checkIcon = '<path d="M20 6 9 17l-5-5"></path>';
 		} catch {}
 	}
 
-	document.querySelectorAll<HTMLElement>('.theme-picker').forEach((picker) => {
-		const trigger = picker.querySelector<HTMLButtonElement>('.theme-trigger')!;
-		const menu = picker.querySelector<HTMLElement>('.theme-menu')!;
-		const items = picker.querySelectorAll<HTMLButtonElement>('.theme-option');
+	function render(choice: Choice) {
+		// 라벨은 메뉴 항목에 표시된 글자를 그대로 쓴다
+		const name = items.find((item) => item.dataset.value === choice)?.textContent?.trim();
+		const label = `테마 선택 (현재: ${name})`;
+		picker.dataset.choice = choice;
+		trigger.setAttribute('aria-label', label);
+		trigger.title = label;
+		items.forEach((item) => item.setAttribute('aria-checked', String(item.dataset.value === choice)));
+	}
 
-		function render(choice: Choice) {
-			const label = `테마 선택 (현재: ${names[choice]})`;
-			picker.dataset.choice = choice;
-			trigger.setAttribute('aria-label', label);
-			trigger.title = label;
-			items.forEach((item) => item.setAttribute('aria-pressed', String(item.dataset.value === choice)));
-		}
+	// 메뉴 오른쪽 끝을 버튼 오른쪽 끝에 맞춰 버튼 바로 아래에 띄운다
+	function place() {
+		const rect = trigger.getBoundingClientRect();
+		menu.style.top = `${rect.bottom + window.scrollY + 4}px`;
+		menu.style.right = `${root.clientWidth - rect.right - window.scrollX}px`;
+	}
 
-		// 메뉴 오른쪽 끝을 버튼 오른쪽 끝에 맞춰 버튼 바로 아래에 띄운다
-		function place() {
-			const rect = trigger.getBoundingClientRect();
-			menu.style.top = `${rect.bottom + window.scrollY + 4}px`;
-			menu.style.right = `${root.clientWidth - rect.right - window.scrollX}px`;
-		}
+	if (typeof menu.showPopover === 'function') {
 		menu.addEventListener('beforetoggle', (event) => {
 			if ((event as ToggleEvent).newState === 'open') place();
 		});
+		// 열리면 선택된 항목에 포커스를 둔다
+		menu.addEventListener('toggle', (event) => {
+			if ((event as ToggleEvent).newState === 'open') {
+				items.find((item) => item.getAttribute('aria-checked') === 'true')?.focus();
+			}
+		});
 		window.addEventListener('resize', () => {
 			if (menu.matches(':popover-open')) place();
+		});
+
+		// role="menu" 규약대로 위아래 화살표·Home·End로 항목 사이를 옮긴다
+		menu.addEventListener('keydown', (event) => {
+			const index = items.indexOf(document.activeElement as HTMLButtonElement);
+			const last = items.length - 1;
+			const next = { ArrowDown: index < last ? index + 1 : 0, ArrowUp: index > 0 ? index - 1 : last, Home: 0, End: last }[
+				event.key
+			];
+			if (next === undefined) return;
+			event.preventDefault();
+			items[next].focus();
 		});
 
 		items.forEach((item) =>
@@ -192,5 +221,5 @@ const checkIcon = '<path d="M20 6 9 17l-5-5"></path>';
 
 		render(currentChoice());
 		trigger.hidden = false;
-	});
+	}
 </script>
