@@ -7,9 +7,9 @@ interface Props {
 	variant: 'mobile' | 'wide';
 }
 
-// h2·h3만 목차에 사용 (본문 안의 h1은 제외)
+// h2~h4만 목차에 사용 (본문 안의 h1은 제외)
 const { headings, variant } = Astro.props;
-const items = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const items = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 4);
 ---
 
 {
@@ -48,8 +48,16 @@ const items = headings.filter((heading) => heading.depth === 2 || heading.depth 
 		padding: 0;
 		list-style: none;
 	}
+	/* 제목 단계별 들여쓰기: h2 기준, 한 단계마다 1em */
 	li {
+		--indent: 0em;
 		margin: 0;
+	}
+	.depth-3 {
+		--indent: 1em;
+	}
+	.depth-4 {
+		--indent: 2em;
 	}
 	a {
 		display: block;
@@ -58,9 +66,6 @@ const items = headings.filter((heading) => heading.depth === 2 || heading.depth 
 	}
 	a:hover {
 		color: var(--link);
-	}
-	.depth-3 a {
-		padding-left: 1em;
 	}
 
 	/* 좁은 화면: 본문 위 접히는 목록 */
@@ -81,7 +86,7 @@ const items = headings.filter((heading) => heading.depth === 2 || heading.depth 
 		padding: 0 1em 0.75em;
 	}
 	.toc-mobile a {
-		padding: 0.35em 0;
+		padding: 0.35em 0 0.35em var(--indent);
 	}
 	.toc-wide {
 		display: none;
@@ -111,7 +116,7 @@ const items = headings.filter((heading) => heading.depth === 2 || heading.depth 
 			border-left: 1px solid var(--border);
 		}
 		.toc-wide a {
-			padding: 0.3em 0 0.3em 0.9em;
+			padding: 0.3em 0 0.3em calc(0.9em + var(--indent));
 			margin-left: -1px;
 			border-left: 2px solid transparent;
 		}
