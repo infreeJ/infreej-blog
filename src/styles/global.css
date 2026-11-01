@@ -144,7 +144,7 @@ pre {
 	border-radius: 6px;
 	font-family: var(--font-mono);
 	letter-spacing: 0;
-	font-size: 14.5px;
+	font-size: 13px;
 	line-height: 1.65;
 	word-break: normal;
 	overflow-wrap: normal;
@@ -195,7 +195,7 @@ hr {
 		font-size: 17px;
 	}
 	pre {
-		font-size: 15px;
+		font-size: 13.5px;
 	}
 }
 
