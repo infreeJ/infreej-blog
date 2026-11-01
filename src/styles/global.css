@@ -1,39 +1,38 @@
-/*
-  The CSS in this style tag is based off of Bear Blog's default CSS.
-  https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css
-  License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
- */
+/* 기술 문서형 스타일: 흰 배경, 회색 경계선, 포인트 색은 링크 하나 */
 
 :root {
-	--accent: #2337ff;
-	--accent-dark: #000d8a;
-	--black: 15, 18, 25;
-	--gray: 96, 115, 159;
-	--gray-light: 229, 233, 240;
-	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
-	--box-shadow:
-		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
-		0 16px 32px rgba(var(--gray), 33%);
+	--text: #1f2328; /* 흰 배경 대비 약 15.4:1 */
+	--text-muted: #57606a; /* 흰 배경 대비 약 6.5:1 */
+	--heading: #0d1117;
+	--link: #0550ae; /* 흰 배경 대비 약 7.6:1 */
+	--border: #d0d7de;
+	--border-soft: #e6e9ed;
+	--bg-subtle: #f6f8fa;
+	--font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
+		'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+	--font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',
+		monospace;
+}
+html {
+	scroll-padding-top: 1.5rem;
 }
 body {
-	font-family: var(--font-atkinson);
 	margin: 0;
 	padding: 0;
-	text-align: left;
-	background: linear-gradient(var(--gray-gradient)) no-repeat;
-	background-size: 100% 600px;
-	word-wrap: break-word;
-	overflow-wrap: break-word;
-	color: rgb(var(--gray-dark));
-	font-size: 20px;
-	line-height: 1.7;
+	background: #fff;
+	color: var(--text);
+	font-family: var(--font-sans);
+	font-size: 17px;
+	line-height: 1.8;
+	word-break: keep-all;
+	overflow-wrap: anywhere;
+	-webkit-text-size-adjust: 100%;
 }
 main {
-	width: 720px;
-	max-width: calc(100% - 2em);
+	width: 700px;
+	max-width: calc(100% - 2rem);
 	margin: auto;
-	padding: 3em 1em;
+	padding: 3rem 0;
 }
 h1,
 h2,
@@ -41,84 +40,156 @@ h3,
 h4,
 h5,
 h6 {
-	margin: 0 0 0.5rem 0;
-	color: rgb(var(--black));
-	line-height: 1.2;
+	margin: 2.4em 0 0.6em;
+	color: var(--heading);
+	font-weight: 700;
+	line-height: 1.35;
 }
 h1 {
-	font-size: 3.052em;
+	margin-top: 0;
+	font-size: 2em;
+	line-height: 1.3;
 }
 h2 {
-	font-size: 2.441em;
+	font-size: 1.5em;
 }
 h3 {
-	font-size: 1.953em;
-}
-h4 {
-	font-size: 1.563em;
-}
-h5 {
 	font-size: 1.25em;
+}
+h4,
+h5,
+h6 {
+	font-size: 1.05em;
 }
 strong,
 b {
 	font-weight: 700;
 }
 a {
-	color: var(--accent);
+	color: var(--link);
+	text-underline-offset: 0.2em;
 }
 a:hover {
-	color: var(--accent);
+	color: var(--heading);
 }
-p {
-	margin-bottom: 1em;
-}
-.prose p {
-	margin-bottom: 2em;
-}
-textarea {
-	width: 100%;
-	font-size: 16px;
-}
-input {
-	font-size: 16px;
-}
-table {
-	width: 100%;
-}
-img {
-	max-width: 100%;
-	height: auto;
-	border-radius: 8px;
-}
-code {
-	padding: 2px 5px;
-	background-color: rgb(var(--gray-light));
+:focus-visible {
+	outline: 2px solid var(--link);
+	outline-offset: 2px;
 	border-radius: 2px;
 }
+p {
+	margin: 0 0 1.5em;
+}
+ul,
+ol {
+	margin: 0 0 1.5em;
+	padding-left: 1.5em;
+}
+li {
+	margin: 0.4em 0;
+}
+li > ul,
+li > ol {
+	margin: 0.4em 0 0;
+}
+img {
+	display: block;
+	max-width: 100%;
+	height: auto;
+	margin: 1.5em 0;
+	border: 1px solid var(--border-soft);
+	border-radius: 6px;
+}
+table {
+	display: block;
+	width: max-content;
+	max-width: 100%;
+	margin: 0 0 1.5em;
+	overflow-x: auto;
+	border-collapse: collapse;
+	font-size: 0.94em;
+	line-height: 1.6;
+	word-break: normal;
+}
+th,
+td {
+	padding: 0.65em 1em;
+	border: 1px solid var(--border);
+	text-align: left;
+}
+th {
+	background: var(--bg-subtle);
+	font-weight: 600;
+}
+code {
+	padding: 0.15em 0.4em;
+	background: var(--bg-subtle);
+	border: 1px solid var(--border-soft);
+	border-radius: 4px;
+	font-family: var(--font-mono);
+	font-size: 0.88em;
+	word-break: normal;
+	overflow-wrap: anywhere;
+}
 pre {
-	padding: 1.5em;
-	border-radius: 8px;
+	margin: 0 0 1.5em;
+	padding: 1.1em 1.25em;
+	overflow-x: auto;
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	font-family: var(--font-mono);
+	font-size: 14.5px;
+	line-height: 1.65;
+	word-break: normal;
+	overflow-wrap: normal;
+	tab-size: 2;
+}
+pre.astro-code {
+	background-color: var(--bg-subtle) !important;
 }
 pre > code {
-	all: unset;
+	padding: 0;
+	background: none;
+	border: 0;
+	border-radius: 0;
+	font-size: inherit;
+	overflow-wrap: normal;
 }
 blockquote {
-	border-left: 4px solid var(--accent);
-	padding: 0 0 0 20px;
-	margin: 0;
-	font-size: 1.333em;
+	margin: 0 0 1.5em;
+	padding: 0.2em 0 0.2em 1em;
+	border-left: 3px solid var(--border);
+	color: var(--text-muted);
+}
+blockquote > :last-child {
+	margin-bottom: 0;
 }
 hr {
+	margin: 2.5em 0;
 	border: none;
-	border-top: 1px solid rgb(var(--gray-light));
+	border-top: 1px solid var(--border);
 }
-@media (max-width: 720px) {
+
+/* 글 본문: 제목은 위 여백을 넓게, 아래는 좁게 */
+.prose h2 {
+	margin-top: 3em;
+	padding-bottom: 0.3em;
+	border-bottom: 1px solid var(--border);
+}
+.prose h3 {
+	margin-top: 2.4em;
+}
+.prose > h2:first-child,
+.prose > h3:first-child {
+	margin-top: 0;
+}
+
+@media (min-width: 721px) {
 	body {
 		font-size: 18px;
 	}
-	main {
-		padding: 1em;
+	pre {
+		font-size: 15px;
 	}
 }
 

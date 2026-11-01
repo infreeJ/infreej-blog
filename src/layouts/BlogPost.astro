@@ -1,14 +1,16 @@
 ---
+import type { MarkdownHeading } from 'astro';
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import TableOfContents from '../components/TableOfContents.astro';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & { headings?: MarkdownHeading[] };
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, headings = [] } = Astro.props;
 ---
 
 <html lang="ko">
@@ -16,41 +18,48 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<BaseHead title={title} description={description} />
 		<style>
 			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
+				width: auto;
+				max-width: none;
 				margin: 0;
+				padding: 3rem 1rem 4rem;
 			}
-			.hero-image {
-				width: 100%;
+			.post {
+				display: grid;
+				grid-template-columns: minmax(0, 700px);
+				justify-content: center;
+				gap: 0 3.5rem;
+			}
+			.post-body {
+				min-width: 0;
+			}
+			.post-side {
+				display: none;
+			}
+			@media (min-width: 1200px) {
+				.post {
+					grid-template-columns: minmax(0, 700px) 220px;
+				}
+				.post-side {
+					display: block;
+					grid-column: 2;
+					grid-row: 1;
+				}
 			}
 			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
+				margin: 0 0 2rem;
 			}
 			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
+				margin-bottom: 2.5rem;
+				padding-bottom: 1.5rem;
+				border-bottom: 1px solid var(--border);
 			}
 			.title h1 {
-				margin: 0 0 0.5em 0;
+				margin: 0.25em 0 0;
 			}
 			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
+				color: var(--text-muted);
+				font-size: 0.9em;
+				line-height: 1.5;
 			}
 		</style>
 	</head>
@@ -58,11 +67,13 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 	<body>
 		<Header />
 		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
+			<article class="post">
+				<div class="post-body">
+					{heroImage && (
+						<div class="hero-image">
+							<Image width={1020} height={510} src={heroImage} alt="" />
+						</div>
+					)}
 					<div class="title">
 						<div class="date">
 							<FormattedDate date={pubDate} />
@@ -73,9 +84,14 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 							)}
 						</div>
 						<h1>{title}</h1>
-						<hr />
 					</div>
-					<slot />
+					<TableOfContents headings={headings} variant="mobile" />
+					<div class="prose">
+						<slot />
+					</div>
+				</div>
+				<div class="post-side">
+					<TableOfContents headings={headings} variant="wide" />
 				</div>
 			</article>
 		</main>

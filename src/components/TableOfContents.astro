@@ -1,0 +1,143 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+	headings: MarkdownHeading[];
+	// mobile: 본문 위 접히는 목록, wide: 본문 옆 sticky 목차
+	variant: 'mobile' | 'wide';
+}
+
+// h2·h3만 목차에 사용 (본문 안의 h1은 제외)
+const { headings, variant } = Astro.props;
+const items = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+---
+
+{
+	items.length > 0 && variant === 'mobile' && (
+		<details class="toc-mobile">
+			<summary>목차</summary>
+			<ol>
+				{items.map((heading) => (
+					<li class={`depth-${heading.depth}`}>
+						<a href={`#${heading.slug}`}>{heading.text}</a>
+					</li>
+				))}
+			</ol>
+		</details>
+	)
+}
+{
+	items.length > 0 && variant === 'wide' && (
+		<aside class="toc-wide">
+			<nav aria-label="글 목차">
+				<p class="toc-title">목차</p>
+				<ol>
+					{items.map((heading) => (
+						<li class={`depth-${heading.depth}`}>
+							<a href={`#${heading.slug}`}>{heading.text}</a>
+						</li>
+					))}
+				</ol>
+			</nav>
+		</aside>
+	)
+}
+<style>
+	ol {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	li {
+		margin: 0;
+	}
+	a {
+		display: block;
+		color: var(--text-muted);
+		text-decoration: none;
+	}
+	a:hover {
+		color: var(--link);
+	}
+	.depth-3 a {
+		padding-left: 1em;
+	}
+
+	/* 좁은 화면: 본문 위 접히는 목록 */
+	.toc-mobile {
+		margin-bottom: 2em;
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		font-size: 15px;
+		line-height: 1.5;
+	}
+	.toc-mobile summary {
+		padding: 0.75em 1em;
+		color: var(--heading);
+		font-weight: 600;
+		cursor: pointer;
+	}
+	.toc-mobile ol {
+		padding: 0 1em 0.75em;
+	}
+	.toc-mobile a {
+		padding: 0.35em 0;
+	}
+	.toc-wide {
+		display: none;
+	}
+
+	/* 넓은 화면: 본문 오른쪽 sticky 목차 */
+	@media (min-width: 1200px) {
+		.toc-mobile {
+			display: none;
+		}
+		.toc-wide {
+			display: block;
+			position: sticky;
+			top: 1.5rem;
+			max-height: calc(100vh - 3rem);
+			overflow-y: auto;
+			font-size: 14px;
+			line-height: 1.5;
+			word-break: keep-all;
+		}
+		.toc-title {
+			margin: 0 0 0.6em;
+			color: var(--heading);
+			font-weight: 600;
+		}
+		.toc-wide ol {
+			border-left: 1px solid var(--border);
+		}
+		.toc-wide a {
+			padding: 0.3em 0 0.3em 0.9em;
+			margin-left: -1px;
+			border-left: 2px solid transparent;
+		}
+		.toc-wide a.current {
+			border-left-color: var(--link);
+			color: var(--link);
+		}
+	}
+</style>
+<script>
+	// 현재 읽는 섹션의 목차 항목을 강조 (JS 없이도 목차 이동은 동작)
+	const links = document.querySelectorAll<HTMLAnchorElement>('.toc-wide a');
+	const targets = Array.from(links)
+		.map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))))
+		.filter((el): el is HTMLElement => el !== null);
+
+	const observer = new IntersectionObserver(
+		(entries) => {
+			for (const entry of entries) {
+				if (!entry.isIntersecting) continue;
+				links.forEach((link) =>
+					link.classList.toggle('current', decodeURIComponent(link.hash.slice(1)) === entry.target.id),
+				);
+			}
+		},
+		{ rootMargin: '0px 0px -75% 0px' },
+	);
+	targets.forEach((el) => observer.observe(el));
+</script>
