@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<meta name="color-scheme" content="light dark" />
+	<title>InfreeJ · 시안 E 글 커밋 로그</title>
+	<link rel="icon" type="image/svg+xml" href="../../../public/favicon.svg" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/joungkyun/font-d2coding/d2coding.css" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" />
+	<link rel="stylesheet" href="./style.css?v=12" />
+</head>
+<body>
+	<header class="site-header">
+		<nav>
+			<a class="brand" href="#">InfreeJ</a>
+			<div class="links">
+				<a class="active" href="#">Home</a>
+				<a href="#">Blog</a>
+				<a href="#">About</a>
+			</div>
+			<button type="button" class="theme-btn" data-theme-btn>테마: 시스템</button>
+		</nav>
+	</header>
+
+	<main>
+		<section class="intro" aria-labelledby="intro-title">
+			<h1 id="intro-title">안녕하세요.<br />개발자 이준혁입니다.</h1>
+			<p class="lede">
+				개발하며 배운 것과 고민한 과정을 기록합니다.
+			</p>
+		</section>
+
+		<ol class="log" data-log aria-label="글 목록, 최신순"></ol>
+		<div class="more" data-more></div>
+	</main>
+
+	<footer class="site-footer">© 2026 InfreeJ. All rights reserved.</footer>
+
+	<!-- 시안 확인용. 실제 페이지에는 넣지 않는다 -->
+	<div class="draft-switch" role="group" aria-label="시안 데이터">
+		<span>시안 데이터</span>
+		<button type="button" data-set="1">지금 (글 1편)</button>
+		<button type="button" data-set="20">글 20편</button>
+	</div>
+
+	<script>
+		// 시안 공통: 테마 순환 (시스템 → 라이트 → 다크)
+		const order = ['system', 'light', 'dark'];
+		const names = { system: '시스템', light: '라이트', dark: '다크' };
+		const themeBtn = document.querySelector('[data-theme-btn]');
+		let ti = 0;
+		themeBtn.addEventListener('click', () => {
+			ti = (ti + 1) % order.length;
+			const t = order[ti];
+			if (t === 'system') delete document.documentElement.dataset.theme;
+			else document.documentElement.dataset.theme = t;
+			themeBtn.textContent = `테마: ${names[t]}`;
+		});
+
+		/*
+		 * 실제 데이터: getSortedPosts() + 글을 추가한 커밋 해시
+		 * 20편 데이터는 2027년 6월까지 꾸준히 썼다고 가정한 예시다
+		 */
+		const real = {
+			today: '2026-11-03',
+			posts: [
+				{
+					hash: '3b489a1',
+					title: 'Cloudflare로 개인 블로그 구축하기',
+					description: 'Astro로 정적 블로그를 만들고 GitHub push만으로 Cloudflare Workers에 자동 배포하도록 구성한 과정과, Obsidian 노트를 블로그 글로 옮기는 방법을 정리했다.',
+					date: '2026-11-01',
+					tags: ['astro', 'cloudflare', 'blog'],
+					edits: 1,
+				},
+			],
+		};
+		const sample = {
+			today: '2027-06-10',
+			posts: [
+				['2027-06-08', '블로그 빌드 시간을 절반으로 줄이기', '이미지 처리 캐시와 콘텐츠 컬렉션 설정을 손봐서 Cloudflare 빌드를 4분에서 2분으로 줄였다.', ['astro', 'performance'], 0],
+				['2027-05-29', 'OG 이미지 자동 생성하기', '글 제목과 태그로 공유용 이미지를 빌드할 때 만들도록 했다. 폰트 때문에 한 번 막혔다.', ['astro', 'og'], 2],
+				['2027-05-15', 'RSS 피드 제대로 만들기', '본문 전체를 넣을지 요약만 넣을지, 이미지 경로는 어떻게 할지 정리했다.', ['blog', 'rss'], 0],
+				['2027-05-01', '글 쓰는 습관 6개월', '반년 동안 17편을 썼다. 무엇이 쓰게 만들었고 무엇이 멈추게 했는지 돌아봤다.', ['회고'], 0],
+				['2027-04-27', '백업 스크립트를 cron으로 돌리기', '', ['homelab'], 0],
+				['2027-04-13', '집 서버에 Postgres 올리기', '', ['homelab', 'postgres'], 1],
+				['2027-04-06', 'Tailscale로 집 서버에 접속하기', '', ['tailscale', 'network'], 0],
+				['2027-03-04', '웹 폰트 서브셋 만들기', '', ['font', 'performance'], 0],
+				['2027-02-20', '이미지 최적화로 LCP 줄이기', '', ['performance'], 0],
+				['2027-02-02', '정적 사이트에 Pagefind로 검색 붙이기', '', ['astro', 'search'], 0],
+				['2027-01-15', 'Conventional Commits를 한국어로 쓰기', '', ['git'], 0],
+				['2027-01-08', '커밋 메시지 규칙을 정한 이유', '', ['git'], 0],
+				['2026-12-31', '2026년 회고', '', ['회고'], 0],
+				['2026-12-19', 'D1로 간단한 방명록 만들기', '', ['cloudflare', 'd1'], 0],
+				['2026-12-05', 'Cloudflare Workers로 조회수 세기', '', ['cloudflare', 'workers'], 0],
+				['2026-11-22', '테마 전환할 때 화면이 깜빡이지 않게 하기', '', ['css', 'astro'], 0],
+				['2026-11-16', 'Astro 콘텐츠 컬렉션으로 태그 페이지 만들기', '', ['astro'], 0],
+				['2026-11-09', 'Obsidian 노트를 블로그 글로 옮기는 스킬 만들기', '', ['obsidian', 'blog'], 0],
+			]
+				.map(([date, title, description, tags, edits]) => ({ hash: fakeHash(title), date, title, description, tags, edits }))
+				.concat([
+					{ ...real.posts[0], hash: '3b489a1' },
+				]),
+		};
+		// 19편 + 첫 글 = 20편
+		sample.posts.splice(4, 0, {
+			hash: fakeHash('Astro 7 업그레이드 기록'),
+			date: '2027-04-30',
+			title: 'Astro 7 업그레이드 기록',
+			description: '',
+			tags: ['astro'],
+			edits: 0,
+		});
+
+		function fakeHash(s) {
+			let h = 2166136261;
+			for (const c of s) h = Math.imul(h ^ c.codePointAt(0), 16777619);
+			return (h >>> 0).toString(16).padStart(8, '0').slice(0, 7);
+		}
+
+		// 표시 규칙
+		const FEATURE = 1; // 맨 위 1편: 큰 카드
+		const RECENT = 3; // 그다음 3편: 제목 + 요약
+		const INITIAL = 10; // 처음에는 10편까지 보여준다
+		const STEP = 10; // 더 보기를 누를 때마다 10편씩 펼친다
+
+		const DAY = 86400000;
+		const parse = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+		const between = (a, b) => Math.round((parse(a) - parse(b)) / DAY);
+		const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+		const md = (s) => { const d = parse(s); return `${d.getMonth() + 1}.${String(d.getDate()).padStart(2, '0')}`; };
+		const full = (s) => s.replaceAll('-', '.');
+		const agoText = (n) => (n === 0 ? '오늘' : n === 1 ? '어제' : `${n}일 전`);
+		const tagList = (tags) => `<p class="tags">${tags.map((t) => `<span>#${esc(t)}</span>`).join('')}</p>`;
+
+		function render(set) {
+			const { today, posts: all } = set;
+			const posts = all;
+			const first = all.at(-1);
+
+			const log = document.querySelector('[data-log]');
+			log.innerHTML = '';
+			posts.forEach((p, i) => {
+				const prev = posts[i - 1];
+				const li = document.createElement('li');
+				const tier = i < FEATURE ? 'feature' : i < FEATURE + RECENT ? 'recent' : 'compact';
+				li.className = `entry is-${tier}`;
+				let html = '';
+
+				// 해가 바뀌는 지점에 연도 표시
+				if (prev && parse(prev.date).getFullYear() !== parse(p.date).getFullYear()) {
+					html += `<p class="year"><span>${parse(p.date).getFullYear()}</span></p>`;
+				}
+
+				const isFirst = p === first;
+				const edits = p.edits ? `<span>고침 ${p.edits}회</span>` : '';
+				if (tier === 'feature') {
+					// 시안 A(commit-log)의 글 카드: 메타 줄이 카드 안에 있고, 태그는 #이름
+					html += `
+						<article class="card">
+							<p class="head">
+								<span class="hash">${p.hash}</span>
+								<time datetime="${p.date}">${full(p.date)}</time>
+								${edits}
+							</p>
+							<h2><a href="#">${esc(p.title)}</a></h2>
+							<p class="desc">${esc(p.description)}</p>
+							<p class="tags">${p.tags.map((t) => `<span>#${esc(t)}</span>`).join('')}</p>
+						</article>`;
+				} else if (tier === 'recent') {
+					html += `
+						<p class="head">
+							<span class="hash">${p.hash}</span>
+							<time datetime="${p.date}">${full(p.date)}</time>
+						</p>
+						<article class="recent">
+							<h3><a href="#">${esc(p.title)}</a></h3>
+							${p.description ? `<p class="desc">${esc(p.description)}</p>` : ''}
+							${tagList(p.tags)}
+						</article>`;
+				} else {
+					html += `
+						<a class="head row" href="#">
+							<span class="hash">${p.hash}</span>
+							<span class="title">${esc(p.title)}</span>
+							<time datetime="${p.date}">${full(p.date)}</time>
+						</a>`;
+				}
+				li.innerHTML = html;
+				log.append(li);
+			});
+
+			/*
+			 * 더 보기: 글은 모두 HTML에 넣어 두고 INITIAL편 뒤로는 숨긴다.
+			 * 실제 페이지에서도 같은 방식이면 JS가 꺼진 환경에서는 전부 보인다.
+			 */
+			const entries = [...log.children];
+			let shown = 0;
+			const more = document.querySelector('[data-more]');
+			function reveal(count) {
+				const from = shown;
+				shown = Math.min(entries.length, shown + count);
+				entries.forEach((li, i) => {
+					li.hidden = i >= shown;
+					li.classList.toggle('is-tail', i === shown - 1);
+				});
+				const rest = entries.length - shown;
+				log.classList.toggle('has-more', rest > 0);
+				more.classList.toggle('has-more', rest > 0);
+				if (rest > 0) {
+					const next = Math.min(STEP, rest);
+					// 더 보기는 목록의 다음 줄처럼 생겼다: 해시 자리에 ···, 제목 자리에 버튼 문구
+					more.innerHTML = `
+						<button type="button" class="more-row" data-more-btn>
+							<span class="more-mark" aria-hidden="true">···</span>
+							<span class="more-label">이전 글 ${next}편 더 보기${rest > next ? `<span class="rest">남은 글 ${rest}편</span>` : ''}</span>
+						</button>`;
+					more.querySelector('[data-more-btn]').addEventListener('click', () => reveal(STEP));
+				} else {
+					more.innerHTML = all.length > 1 ? `<a href="#">블로그에서 태그별로 보기</a>` : '';
+				}
+				// 키보드로 눌렀다면 새로 펼친 첫 글로 포커스를 옮긴다
+				if (from > 0) entries[from]?.querySelector('a')?.focus({ preventScroll: true });
+			}
+			reveal(INITIAL);
+
+			document.querySelectorAll('[data-set]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.set === String(all.length > 1 ? 20 : 1))));
+		}
+
+		document.querySelectorAll('[data-set]').forEach((b) =>
+			b.addEventListener('click', () => {
+				render(b.dataset.set === '20' ? sample : real);
+				const url = new URL(location.href);
+				url.searchParams.set('posts', b.dataset.set);
+				history.replaceState(null, '', url);
+			}),
+		);
+		render(new URLSearchParams(location.search).get('posts') === '20' ? sample : real);
+	</script>
+</body>
+</html>
