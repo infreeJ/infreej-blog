@@ -1,6 +1,6 @@
 ---
 title: 'Cloudflare로 개인 블로그 구축하기'
-description: 'Astro로 정적 블로그를 만들고 GitHub push만으로 Cloudflare Workers에 자동 배포하도록 구성한 과정과, Obsidian 노트를 블로그 글로 옮기는 방법을 정리했다.'
+description: 'Astro와 Cloudflare로 개인 블로그를 만들고 자동 배포를 설정한 과정입니다.'
 pubDate: 2026-11-01
 tags: ['astro', 'cloudflare', 'blog']
 ---

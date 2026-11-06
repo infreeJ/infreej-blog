@@ -1,0 +1,95 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import '../styles/post-log.css';
+
+interface Props {
+	posts: CollectionEntry<'blog'>[];
+	history?: Record<string, { hash: string }>;
+}
+
+const { posts, history = {} } = Astro.props;
+const dateString = (date: Date) => date.toISOString().slice(0, 10);
+---
+
+<main class="post-log-home" data-post-log>
+	<section class="intro" aria-labelledby="intro-title">
+		<h1 id="intro-title">안녕하세요.<br />개발자 이준혁입니다.</h1>
+		<p class="lede">개발하며 배운 것과 고민한 과정을 기록합니다.</p>
+	</section>
+	{posts.length === 0 ? <p class="empty">아직 작성한 글이 없습니다.</p> : (
+		<ol class="log" id="home-posts" data-log aria-label="글 목록, 최신순">
+			{posts.map((post, index) => {
+				const date = dateString(post.data.pubDate);
+				const previous = posts[index - 1];
+				const yearChanged = previous && dateString(previous.data.pubDate).slice(0, 4) !== date.slice(0, 4);
+				const tier = index === 0 ? 'feature' : index < 4 ? 'recent' : 'compact';
+				const metadata = history[post.id];
+				const href = `/blog/${post.id}/`;
+				return (
+					<li class:list={['entry', `is-${tier}`, { 'is-tail': index === posts.length - 1 }]} data-log-entry>
+						{yearChanged && <p class="year"><span>{date.slice(0, 4)}</span></p>}
+						{tier === 'compact' ? (
+							<article>
+								<a class:list={['head', 'row', { 'without-hash': !metadata?.hash }]} href={href}>
+									{metadata?.hash && <span class="hash" aria-label={`커밋 ${metadata.hash}`}>{metadata.hash}</span>}
+									<h2 class="title">{post.data.title}</h2>
+									<time datetime={date}>{date.replaceAll('-', '.')}</time>
+								</a>
+							</article>
+						) : (
+							<article class={tier === 'feature' ? 'card' : 'recent'}>
+								<p class="head">
+									{metadata?.hash && <span class="hash" aria-label={`커밋 ${metadata.hash}`}>{metadata.hash}</span>}
+									{tier === 'feature' && <span class="branch-ref">(HEAD -&gt; main)</span>}
+									<time datetime={date}>{date.replaceAll('-', '.')}</time>
+								</p>
+								<h2><a href={href}>{post.data.title}</a></h2>
+								{post.data.description && <p class="desc">{post.data.description}</p>}
+								{post.data.tags.length > 0 && <p class="tags">{post.data.tags.map((tag) => <span>#{tag}</span>)}</p>}
+							</article>
+						)}
+					</li>
+				);
+			})}
+		</ol>
+	)}
+	{posts.length > 1 && (
+		<div class="more" data-more>
+			<button type="button" class="more-row" data-more-button hidden aria-controls="home-posts">
+				<span class="more-mark" aria-hidden="true">···</span>
+				<span class="more-label"><span data-more-label></span><span class="rest" data-more-rest></span></span>
+			</button>
+			<a href="/blog/" data-blog-link>블로그에서 모든 글 보기</a>
+		</div>
+	)}
+</main>
+
+<script>
+	const root = document.querySelector<HTMLElement>('[data-post-log]');
+	const log = root?.querySelector<HTMLOListElement>('[data-log]');
+	const entries = Array.from(root?.querySelectorAll<HTMLElement>('[data-log-entry]') ?? []);
+	const button = root?.querySelector<HTMLButtonElement>('[data-more-button]');
+	const blogLink = root?.querySelector<HTMLAnchorElement>('[data-blog-link]');
+	const label = root?.querySelector<HTMLElement>('[data-more-label]');
+	const restLabel = root?.querySelector<HTMLElement>('[data-more-rest]');
+	let shown = 0;
+
+	function reveal(count: number, moveFocus = false) {
+		const from = shown;
+		shown = Math.min(entries.length, shown + count);
+		entries.forEach((entry, index) => {
+			entry.hidden = index >= shown;
+			entry.classList.toggle('is-tail', index === shown - 1);
+		});
+		const remaining = entries.length - shown;
+		log?.classList.toggle('has-more', remaining > 0);
+		if (button) button.hidden = remaining === 0;
+		if (blogLink) blogLink.hidden = remaining > 0;
+		if (label) label.textContent = `이전 글 ${Math.min(10, remaining)}편 더 보기`;
+		if (restLabel) restLabel.textContent = remaining > 10 ? `남은 글 ${remaining}편` : '';
+		if (moveFocus) entries[from]?.querySelector<HTMLAnchorElement>('a')?.focus({ preventScroll: true });
+	}
+
+	button?.addEventListener('click', (event) => reveal(10, event.detail === 0));
+	reveal(10);
+</script>
